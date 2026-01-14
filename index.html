@@ -1,127 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title> Serajia Milk Shop  Costomer-Ledger</title>
-  <style>
-    body { font-family: sans-serif; background: #f5f5f5; padding: 10px; }
-    h1 { text-align: center; color: #2c3e50; }
-    form, .entry { background: white; padding: 15px; margin: 10px 0; border-radius: 10px; box-shadow: 0 0 5px #ccc; }
-    label { display: block; margin-top: 10px; }
-    input[type="text"], input[type="number"] {
-      width: 100%; padding: 8px; margin-top: 5px;
-      border: 1px solid #ccc; border-radius: 5px;
-    }
-    button {
-      background: #27ae60; color: white;
-      border: none; padding: 10px 15px;
-      border-radius: 5px; margin-top: 10px;
-      cursor: pointer;
-    }
-    .remove-btn {
-      background: #e74c3c;
-      border: none;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      float: right;
-      font-size: 14px;
-      margin-top: -35px;
-    }
-    @media (max-width: 600px) {
-      input, button { font-size: 16px; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milk Shop Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e0f7fa; /* Light blue for a milk theme */
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            background-color: #b2ebf2;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        h1 {
+            color: #00796b;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, button {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #004d40;
+        }
+        #menu-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        #menu-list li {
+            background-color: #f1f8e9;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1 id="shop-name">Milk Shop</h1>
+    </header>
+    
+    <div class="container">
+        <h2>Set Shop Name</h2>
+        <form id="name-form">
+            <label for="shop-name-input">Shop Name:</label>
+            <input type="text" id="shop-name-input" placeholder="Enter shop name">
+            <button type="submit">Update Name</button>
+        </form>
+        
+        <h2>Add Menu Item</h2>
+        <form id="menu-form">
+            <label for="item-name">Item Name:</label>
+            <input type="text" id="item-name" placeholder="e.g., Whole Milk" required>
+            
+            <label for="item-price">Price:</label>
+            <input type="number" id="item-price" step="0.01" placeholder="e.g., 2.50" required>
+            
+            <button type="submit">Add Item</button>
+        </form>
+        
+        <h2>Menu</h2>
+        <ul id="menu-list">
+            <!-- Menu items will appear here -->
+        </ul>
+    </div>
 
-  <h1> Serajia Milk Shop Costomer-Ledger</h1>
+    <script>
+        // Handle shop name update
+        document.getElementById('name-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('shop-name-input').value;
+            if (nameInput.trim()) {
+                document.getElementById('shop-name').textContent = nameInput;
+                document.getElementById('shop-name-input').value = ''; // Clear input
+            }
+        });
 
-  <form id="khataForm">
-    <label>Name</label>
-    <input type="text" id="name" required>
-
-    <label>Date</label>
-    <input type="text" id="date" required placeholder="DD-MM-YYYY">
-
-    <label>Milk (Litres)</label>
-    <input type="number" id="milk" value="0" min="0">
-
-    <label>Yogurt (Kg)</label>
-    <input type="number" id="yogurt" value="0" min="0">
-
-    <label>Ghee (Kg)</label>
-    <input type="number" id="ghee" value="0" min="0">
-
-    <label>Address</label>
-    <input type="text" id="address" required>
-
-    <button type="submit">Add Entry</button>
-  </form>
-
-  <div id="entries"></div>
-
-  <script>
-    const prices = { milk: 200, yogurt: 250, ghee: 3200 };
-
-    // Load entries from localStorage or empty array
-    let entries = JSON.parse(localStorage.getItem('khataEntries') || '[]');
-
-    const form = document.getElementById('khataForm');
-    const entriesDiv = document.getElementById('entries');
-
-    function displayEntries() {
-      entriesDiv.innerHTML = '';
-      if(entries.length === 0) {
-        entriesDiv.innerHTML = '<p>No entries yet.</p>';
-        return;
-      }
-      entries.forEach((entry, index) => {
-        const total = entry.milk * prices.milk + entry.yogurt * prices.yogurt + entry.ghee * prices.ghee;
-        const div = document.createElement('div');
-        div.className = 'entry';
-        div.innerHTML = `
-          <button class="remove-btn" onclick="removeEntry(${index})">Remove</button>
-          <strong>${entry.name}</strong> | ${entry.date}<br>
-          Milk: ${entry.milk}L, Yogurt: ${entry.yogurt}Kg, Ghee: ${entry.ghee}Kg<br>
-          Address: ${entry.address}<br>
-          <strong>Total: Rs. ${total}</strong>
-        `;
-        entriesDiv.appendChild(div);
-      });
-    }
-
-    function removeEntry(index) {
-      if(confirm('Are you sure you want to remove this entry?')) {
-        entries.splice(index, 1);
-        localStorage.setItem('khataEntries', JSON.stringify(entries));
-        displayEntries();
-      }
-    }
-
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const newEntry = {
-        name: form.name.value.trim(),
-        date: form.date.value.trim(),
-        milk: Number(form.milk.value),
-        yogurt: Number(form.yogurt.value),
-        ghee: Number(form.ghee.value),
-        address: form.address.value.trim()
-      };
-      entries.push(newEntry);
-      localStorage.setItem('khataEntries', JSON.stringify(entries));
-      displayEntries();
-      form.reset();
-    });
-
-    // Make removeEntry global for inline onclick
-    window.removeEntry = removeEntry;
-
-    displayEntries();
-  </script>
-
+        // Handle adding menu items
+        document.getElementById('menu-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const itemName = document.getElementById('item-name').value;
+            const itemPrice = document.getElementById('item-price').value;
+            
+            if (itemName.trim() && itemPrice) {
+                const menuList = document.getElementById('menu-list');
+                const listItem = document.createElement('li');
+                listItem.textContent = `${itemName} - $${parseFloat(itemPrice).toFixed(2)}`;
+                menuList.appendChild(listItem);
+                
+                // Clear inputs
+                document.getElementById('item-name').value = '';
+                document.getElementById('item-price').value = '';
+            }
+        });
+    </script>
 </body>
 </html>
